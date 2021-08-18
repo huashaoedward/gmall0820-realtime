@@ -208,7 +208,7 @@ public class OrderWideApp {
         //TODO 7.维度表的关联：异步查询，关联用户维度
         /*
          AsyncDataStream.unorderedWait()的4个参数：
-         流，AsyncFunction，超时时间，时间单位
+         流，AsyncFunction，超时时间，时间单位.
          */
         SingleOutputStreamOperator<OrderWide> orderWideWithUserDS = AsyncDataStream.unorderedWait(
             orderWideDS,
