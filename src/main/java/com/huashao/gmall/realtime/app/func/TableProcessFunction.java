@@ -33,7 +33,7 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
     //声明Phoenix的连接对象
     Connection conn = null;
 
-    //实例化函数对象的时候，将侧输出流标签也进行赋值
+    //有参构造，实例化函数对象的时候，将侧输出流标签也进行赋值
     public TableProcessFunction(OutputTag<JSONObject> outputTag) {
         this.outputTag = outputTag;
     }
@@ -119,7 +119,7 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
         if (pk == null) {
             pk = "id";
         }
-        //如果在配置表中，没有配置建表扩展 需要给一个默认建表扩展的值
+        //如果在配置表中，没有配置建表扩展 需要给一个默认建表扩展的值，是空
         if (ext == null) {
             ext = "";
         }

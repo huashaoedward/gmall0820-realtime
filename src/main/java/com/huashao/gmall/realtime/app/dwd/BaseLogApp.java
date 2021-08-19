@@ -50,6 +50,7 @@ public class BaseLogApp {
         //设置状态后端，存入文件系统hdfs
         //env.setStateBackend(new FsStateBackend("hdfs://hadoop202:8020/gmall/checkpoint/baselogApp"));
 
+        //用Idea代码往hdfs上写数据时，用户是administrator，会有permission denied
         //System.setProperty("HADOOP_USER_NAME","atguigu");
 
         //TODO 2.从Kafka中读取数据
@@ -176,7 +177,7 @@ public class BaseLogApp {
                         JSONArray displays = jsonObj.getJSONArray("displays");
                         //判断是否为曝光日志
                         if (displays != null && displays.size() > 0) {
-                            //如果是曝光日志，遍历输出到侧输出流
+                            //如果是曝光日志，遍历Json数组，输出到侧输出流
                             for (int i = 0; i < displays.size(); i++) {
                                 //获取每一条曝光事件
                                 JSONObject displaysJsonObj = displays.getJSONObject(i);

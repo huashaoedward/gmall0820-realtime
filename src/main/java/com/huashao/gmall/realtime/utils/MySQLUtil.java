@@ -12,6 +12,9 @@ import java.util.List;
  * Author: huashao
  * Date: 2021/7/31
  * Desc: 从MySQL数据中查询数据的工具类
+ *
+ * 要点：对象关系映射和反射模板，驼峰命名工具类，BeanUtils.setProperty工具类
+ *
  * 完成ORM，对象关系映射
  * O：Object对象       Java中对象
  * R：Relation关系     关系型数据库
@@ -40,9 +43,10 @@ public class MySQLUtil {
             Class.forName("com.mysql.jdbc.Driver");
             //创建连接
             conn = DriverManager.getConnection(
-                "jdbc:mysql://hadoop202:3306/gmall0820_realtime?characterEncoding=utf-8&useSSL=false",
+                "jdbc:mysql://hadoop102:3306/gmall0820_realtime" +
+                        "?characterEncoding=utf-8&useSSL=false",
                 "root",
-                "123456");
+                "hua3293316");
             //创建数据库操作对象
             ps = conn.prepareStatement(sql);
             //执行SQL语句
