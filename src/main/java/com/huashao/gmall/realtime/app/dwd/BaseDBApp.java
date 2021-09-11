@@ -75,7 +75,8 @@ public class BaseDBApp {
                 //table是jsonObj的一个字段，而data是jsonObj的一个json字段，所以用getJSONObject
                 boolean flag = jsonObj.getString("table") != null
                     && jsonObj.getJSONObject("data") != null
-                        /*data是json字段，转为string后，长度大于3，是因为data里本来有个字段id，就是长度2
+                        /*
+                        data是json字段，转为string后，长度大于3，是因为data里本来有个字段id，就是长度2
                         了，大于3才有id，以及其他信息。
                          */
                     && jsonObj.getString("data").length() > 3;
@@ -127,7 +128,8 @@ public class BaseDBApp {
 
                 /**
                  * 序列化方法serialize
-                 * @param jsonObj
+                 * @param jsonObj 这个传入的参数是由new KafkaSerializationSchema
+                 *                <JSONObject>()的泛型决定的
                  * @param timestamp
                  * @return 返回ProducerRecord，它的key和value都是字节数组
                  */

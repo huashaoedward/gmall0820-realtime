@@ -3,8 +3,8 @@ package com.huashao.gmall.realtime.bean;
 import lombok.Data;
 
 /**
- * Author: Felix
- * Date: 2021/2/1
+ * Author: huashao
+ * Date: 2021/7/30
  * Desc:  配置表对应的实体类
  */
 @Data

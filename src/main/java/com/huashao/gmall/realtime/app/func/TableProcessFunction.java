@@ -66,7 +66,7 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
         System.out.println("查询配置表信息");
         //TableProcess是bean对象，查询出的每一条记录封装成TableProcess对象
         List<TableProcess> tableProcessList = MySQLUtil.queryList("select * from table_process", TableProcess.class, true);
-        //对查询出来的结果集进行遍历
+        //对查询出来的结果集进行遍历，遍历每一条记录
         for (TableProcess tableProcess : tableProcessList) {
             //获取源表表名
             String sourceTable = tableProcess.getSourceTable();
@@ -190,7 +190,8 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
             TableProcess tableProcess = tableProcessMap.get(key);
             //如果获取到了该元素对应的配置信息
             if (tableProcess != null) {
-                /*获取sinkTable，指明当前这条数据应该发往何处
+                /*
+                获取sinkTable，指明当前这条数据应该发往何处
                 如果是维度数据，那么对应的是phoenix中的表名；如果是事实数据，对应的是kafka的主题名
                 也是在流中的jsonObj中新增一个字段，sink_table，标明往哪里发。
                  */
@@ -217,7 +218,10 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
     }
 
     /**
-     * 对Data中数据进行进行过滤，根据配置表中的要保留字段，只保留部分字段
+     * 对Data中数据进行进行过滤，根据配置表中的要保留字段，只保留部分字段。
+     * 要点：
+     * 1. 数组不方便判断包含，转为List来判断。
+     * 2. 用迭代器的方式，对集合data的元素，遍历和删除
      *
      * @param data 是数据中Data这个JsonObj
      * @param sinkColumns 要配置表中的要保留字段
@@ -229,7 +233,7 @@ public class TableProcessFunction extends ProcessFunction<JSONObject, JSONObject
         //将数组转换为集合，为了判断集合中是否包含某个元素，因为数组不好判断是否包含元素
         List<String> columnList = Arrays.asList(cols);
 
-        //获取json对象中封装的一个个键值对   每个键值对封装为Entry类型
+        //获取json对象中封装的一个个键值对，类似map   每个键值对封装为Entry类型
         Set<Map.Entry<String, Object>> entrySet = data.entrySet();
 
         //拿到entrySet的迭代器，用于遍历和删除里面的元素；

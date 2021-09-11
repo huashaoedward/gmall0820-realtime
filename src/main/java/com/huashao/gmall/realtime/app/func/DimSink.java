@@ -45,7 +45,7 @@ public class DimSink extends RichSinkFunction<JSONObject> {
     public void invoke(JSONObject jsonObj, Context context) throws Exception {
         //获取目标表的名称，这个表也是在ProcessElement()方法中添加的字段
         String tableName = jsonObj.getString("sink_table");
-        //获取json中data数据   data数据就是经过过滤之后  保留的业务表中字段
+        //获取json中data数据   data数据就是经过filterColumn()过滤之后  保留的业务表中字段
         JSONObject dataJsonObj = jsonObj.getJSONObject("data");
 
         if (dataJsonObj != null && dataJsonObj.size() > 0) {
@@ -59,7 +59,7 @@ public class DimSink extends RichSinkFunction<JSONObject> {
                 //根据sql生成预编译语句
                 ps = conn.prepareStatement(upsertSql);
                 ps.execute();
-                //注意：执行完Phoenix插入操作之后，需要手动提交事务
+                //！！！注意：执行完Phoenix插入操作之后，需要手动提交事务
                 conn.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -70,17 +70,17 @@ public class DimSink extends RichSinkFunction<JSONObject> {
                 }
             }
 
-            //如果当前做的是更新操作，需要将Redis中缓存的旧数据清除掉（新的数据在被第一次查询到时再缓存）
+            //如果当前做的是更新或删除操作，需要将Redis中缓存的旧数据清除掉（新的数据在被第一次查询到时再缓存）
             if(jsonObj.getString("type").equals("update")||jsonObj.getString("type").equals("delete")){
                 DimUtil.deleteCached(tableName,dataJsonObj.getString("id"));
             }
         }
 
-
     }
 
     /**
      * 根据表名和data属性和值  生成向Phoenix中插入数据的sql语句
+     * 要点：使用apache commons-utils中的StringUtils.join，用,把集合set中的元素连接起来
      *
      * @param tableName  表名
      * @param dataJsonObj  传入的数据JSONObject
