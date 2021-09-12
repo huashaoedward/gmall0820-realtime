@@ -42,7 +42,7 @@ public class MyKafkaUtil {
 
     /**
      * 根据序列化方式，获取Kafka Sink
-     * 可指定序列化方式(之前只能是SimpleStringSchema，现在可传入对象，或JSONObject)，
+     * 可指定序列化方式(之前只能是SimpleStringSchema，现在可传入泛型对象，或JSONObject)，
      * 而且因为不能指定topic，所以没法传入topic，所有数据发往指定默认的主题"DEFAULT_DATA"
      * @param kafkaSerializationSchema
      * @param <T>
@@ -51,7 +51,7 @@ public class MyKafkaUtil {
     public static <T> FlinkKafkaProducer<T> getKafkaSinkBySchema(KafkaSerializationSchema<T> kafkaSerializationSchema) {
         Properties props = new Properties();
         props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,KAFKA_SERVER);
-        //设置生产数据的超时时间
+        //设置生产数据的超时时间15分钟
         props.setProperty(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG,15*60*1000+"");
         /**
          * FlinkKafkaProducer的4个参数：

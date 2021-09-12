@@ -66,6 +66,10 @@ public class BaseLogApp {
             new MapFunction<String, JSONObject>() {
                 @Override
                 public JSONObject map(String value) throws Exception {
+                    /*
+                    Flink在重写方法时，map()的形参已经是从consumerRecord拿出的value中的消息体，
+                    而spark要自己用consumerRecord.value拿出消息体。
+                     */
                     //使用FastJson的parseObject直接把String转成Json对象
                     JSONObject jsonObject = JSON.parseObject(value);
                     return jsonObject;
@@ -76,7 +80,7 @@ public class BaseLogApp {
         /*
         TODO 4.识别新老访客     前端也会对新老状态进行记录，有可能会不准，咱们这里是再次做一个确认
             保存mid某天方法情况（将首次访问日期作为状态保存起来），等后面该设备在有日志过来的时候，从状态中获取日期
-            和日志产生日志进行对比。如果状态不为空，并且状态日期和当前日期不相等，说明是老访客，如果is_new标记是1，那么对其状态进行修复
+            和日志产生日期进行对比。如果状态不为空，并且状态日期和当前日期不相等，说明是老访客，如果is_new标记是1，那么对其状态进行修复
         */
         //4.1 根据mid对日志进行分组
         /*
@@ -88,7 +92,7 @@ public class BaseLogApp {
         );
 
         //4.2 新老方法状态修复   状态分为算子状态和键控状态，我们这里要记录某一个设备的访问，使用键控状态比较合适
-        //使用的是map算子来处理
+        //使用的是map算子来处理，里面是富函数
         SingleOutputStreamOperator<JSONObject> jsonDSWithFlag = midKeyedDS.map(
             new RichMapFunction<JSONObject, JSONObject>() {
                 //定义该mid访问状态
@@ -173,7 +177,7 @@ public class BaseLogApp {
                         out.collect(dataStr);
 
                         //如果不是启动日志，获取曝光日志标记（曝光日志中也携带了页面）
-                        //获取Json数组
+                        //获取Json数组getJSONArray()
                         JSONArray displays = jsonObj.getJSONArray("displays");
                         //判断是否为曝光日志
                         if (displays != null && displays.size() > 0) {
